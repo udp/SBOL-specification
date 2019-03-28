@@ -4,7 +4,7 @@
 % -----------------------------------------------------------------------------
 \twozeroone{\subsection{SBOL Namespaces}
 
-Namespaces for different versions of SBOL SHOULD NOT be semantically mixed in the same document. For example, an SBOL 2.x \sbol{ComponentInstance} SHOULD NOT refer to an SBOL 1.x DNAComponent. However, namespaces for different versions MAY be present in the same document so long as they are semantically independent (that is, so long as objects belonging to these namespaces do not refer to each other). When multiple SBOL namespaces are present in a document, libraries SHOULD default to interpreting as SBOL only those objects belonging to the namespace for the most recent version of SBOL in the document. Any remaining objects belonging to any other SBOL namespace SHOULD be interpreted as \sbol{GenericTopLevel}s and custom \sbol{Annotation}s.}
+Namespaces for different versions of SBOL SHOULD NOT be semantically mixed in the same document. For example, an SBOL 3.x \sbol{SubComponent} SHOULD NOT refer to an SBOL 1.x DNAComponent. However, namespaces for different versions MAY be present in the same document so long as they are semantically independent (that is, so long as objects belonging to these namespaces do not refer to each other). When multiple SBOL namespaces are present in a document, libraries SHOULD default to interpreting as SBOL only those objects belonging to the namespace for the most recent version of SBOL in the document. Any remaining objects belonging to any other SBOL namespace SHOULD be interpreted as \sbol{GenericTopLevel}s and custom \sbol{Annotation}s.}
 
 \subsection{Use of the Version Property}
 
@@ -20,7 +20,7 @@ This convention represents versions as sequences of numbers and qualifiers separ
 \subsection{Compliant SBOL Objects}
 \label{sec:compliant}
 
-Maintaining unique \sbol{identity} \sbol{URI}s for all SBOL objects can be a very challenging implementation task.  To reduce this burden, users of SBOL 2.x are encouraged to follow a few simple rules when constructing the \sbol{identity} properties and related properties for SBOL objects.  When these rules are followed in constructing an SBOL object, we say that this object is \emph{compliant}. These rules are as follows:
+Maintaining unique \sbol{identity} \sbol{URI}s for all SBOL objects can be a very challenging implementation task.  To reduce this burden, users of SBOL 3.x are encouraged to follow a few simple rules when constructing the \sbol{identity} properties and related properties for SBOL objects.  When these rules are followed in constructing an SBOL object, we say that this object is \emph{compliant}. These rules are as follows:
 \begin{enumerate}
 \item The \sbol{identity} of a compliant SBOL object MUST begin with a \emph{URI prefix} that maps to a domain over which the user has control. Namely, the user can guarantee uniqueness of identities within this domain.
 \item The \sbol{persistentIdentity} and \sbol{displayId} properties are REQUIRED of a compliant SBOL object.
@@ -63,7 +63,7 @@ contains valid SBOL. When an RDF document is deserialized to SBOL
 objects, the program doing so SHOULD verify that all of the property
 values encoded therein have the right data type (e.g., that the object
 pointed to by the \sbol{sequences} property of a
-\sbol{ComponentDefinition} is really a \sbol{Sequence}).
+\sbol{Component} is really a \sbol{Sequence}).
 For complete files, this validation can be carried out entirely locally. For files that are not complete, an implementation either needs to
 have a means of validating those external references (e.g., by
 retrieving them from various repositories), or it needs to mark them as
@@ -72,7 +72,7 @@ unverified and not depend on their correctness.
 \subsection{Recommended Ontologies for External Terms}
 \label{sec:recomm_ontologies}
 
-External ontologies and controlled vocabularies are an integral part of SBOL. SBOL uses \sbol{URI}s to access existing biological information through these resources. New SBOL specific terms are defined only when necessary. For example, \sbol{ComponentDefinition} \sbolmult{types:CD}{types}, such as DNA or protein, are described using BioPAX terms. Similarly, the roles of a DNA \twozeroone{or RNA} \sbol{ComponentDefinition} are described via SO terms. Although RECOMMENDED ontologies have been indicated in relevant sections where possible, other resources providing similar terms can also be used. A summary of these external sources can be found in \ref{tbl:preferred_external_resources}.
+External ontologies and controlled vocabularies are an integral part of SBOL. SBOL uses \sbol{URI}s to access existing biological information through these resources. New SBOL specific terms are defined only when necessary. For example, \sbol{Component} \sbolmult{types:CD}{types}, such as DNA or protein, are described using BioPAX terms. Similarly, the roles of a DNA \twozeroone{or RNA} \sbol{Component} are described via SO terms. Although RECOMMENDED ontologies have been indicated in relevant sections where possible, other resources providing similar terms can also be used. A summary of these external sources can be found in \ref{tbl:preferred_external_resources}.
 
 \begin{table}[ht]
   \begin{edtable}{tabular}{p{3cm}p{1.5cm}p{4.5cm}p{6cm}}
@@ -80,7 +80,7 @@ External ontologies and controlled vocabularies are an integral part of SBOL. SB
     \textbf{SBOL Entity} & \textbf{Property} & \textbf{Preferred External Resource}
     & \textbf{More Information} \\
     \midrule
-    \textbf{ComponentDefinition}  & types & BioPAX & \url{http://www.biopax.org}\\
+    \textbf{Component}  & types & BioPAX & \url{http://www.biopax.org}\\
                                   & types & SO (nucleic acid topology)& \url{http://www.sequenceontology.org}\\
     						   	  & roles & SO (\textit{DNA} or \textit{RNA}) & \url{http://www.sequenceontology.org}   \\
     						   	  & roles & CHEBI (\textit{small molecule}) & \url{https://www.ebi.ac.uk/chebi/}   \\
@@ -142,11 +142,11 @@ Authorship information should ideally be added to \sbol{TopLevel} entities, wher
 
 Provenance is central to a range of quality control and attribution tasks within the Synthetic Biology design process. Tracking attribution and derivation of one resource from another is paramount for managing intellectual property purposes. Source designs are often modified in systematic ways to generate derived designs, for example, by applying codon optimization or systematically removing all of a class of restriction enzyme sites.  Documenting the transformation used, and any associated parameters, makes this explicit and potentially allows the process to be reproduced systematically. If a design has been used within other designs, and is later found to be defective, it is paramount that all uses of it, including uses of edited versions of the design, can be identified, and ideally replaced with a non-defective alternative. When importing data from external sources, it is important not only to attribute the original source (for example, GenBank), but also the tool used to perform the import, as this may have made arbitrary choices as to how to represent the source knowledge as SBOL. All these activities have in common that it is necessary to track what resource, and what transformation process was applied by whom to derive an SBOL design.
 
-The PROV-O ontology (https://www.w3.org/TR/prov-o/) already defines a data model for provenance. PROV-O's \sbol{wasDerivedFroms} property was adopted in SBOL 2.x to describe the derivation of an SBOL entity from another in a light-weight provenance scheme.  Here, a subset of PROV-O is adopted for SBOL as a best practice to describe these activities in more detail\footnote{We thank Dr Paolo Missier from the School of Computing Science, Newcastle University for discussions regarding the use of PROV-O.}. PROV-O defines three core classes: \texttt{Entity}, \texttt{Activity} and \texttt{Agent}. An Agent (for example a software or a person) runs an Activity (according to a Plan) to generate one Entity from another. Although, PROV-O provides many other classes and rich set of terms. this specification describes the minimal subset of PROV-O that a provenance-aware SBOL tool should handle. This subset (\ref{uml:provenance}) includes the PROV-O's \sbol{Activity}, \sbol{Usage}, \sbol{Association}, \sbol{Agent} and \sbol{Plan} classes. Any SBOL's \sbol{Identified} object implicitly can act as an instance of PROV-O's \texttt{Entity} class and can include provenance through relationships to different activities. Resources representing \sbol{Agent}, \sbol{Activity} and \sbol{Plan} classes should be handled as \sbol{GenericTopLevel}, whilst \sbol{Usage} and \sbol{Association} resources should be nested within their parent activities. 
+The PROV-O ontology (https://www.w3.org/TR/prov-o/) already defines a data model for provenance. PROV-O's \sbol{wasDerivedFroms} property was adopted in SBOL 3.x to describe the derivation of an SBOL entity from another in a light-weight provenance scheme.  Here, a subset of PROV-O is adopted for SBOL as a best practice to describe these activities in more detail\footnote{We thank Dr Paolo Missier from the School of Computing Science, Newcastle University for discussions regarding the use of PROV-O.}. PROV-O defines three core classes: \texttt{Entity}, \texttt{Activity} and \texttt{Agent}. An Agent (for example a software or a person) runs an Activity (according to a Plan) to generate one Entity from another. Although, PROV-O provides many other classes and rich set of terms. this specification describes the minimal subset of PROV-O that a provenance-aware SBOL tool should handle. This subset (\ref{uml:provenance}) includes the PROV-O's \sbol{Activity}, \sbol{Usage}, \sbol{Association}, \sbol{Agent} and \sbol{Plan} classes. Any SBOL's \sbol{Identified} object implicitly can act as an instance of PROV-O's \texttt{Entity} class and can include provenance through relationships to different activities. Resources representing \sbol{Agent}, \sbol{Activity} and \sbol{Plan} classes should be handled as \sbol{GenericTopLevel}, whilst \sbol{Usage} and \sbol{Association} resources should be nested within their parent activities. 
 
 %Although the full-set of PROV-O terms can be used in SBOL documents, a subset of PROV-O is adopted as a best practice. It is advised that SBOL tools should at least understand this subset, defined in Figure \ref{uml:provenance}.  
 
-Providers of provenance information are free to make use of more of PROV-O than is described here. It is acceptable for tools that understand more than this subset and use as much as they are able. Tools that only understand this subset must treat any additional data as annotations. Tools that are not aware of SBOL provenance at all must maintain and provide access to this information as annotations. This specification does not state what the newly added properties must point to. As long as they are resources that are consistent with the PROV-O property domains, they are legal. For example, a ComponentDefinition may be derived from another ComponentDefinition, but it would probably not make sense for it to be derived from a Collection.
+Providers of provenance information are free to make use of more of PROV-O than is described here. It is acceptable for tools that understand more than this subset and use as much as they are able. Tools that only understand this subset must treat any additional data as annotations. Tools that are not aware of SBOL provenance at all must maintain and provide access to this information as annotations. This specification does not state what the newly added properties must point to. As long as they are resources that are consistent with the PROV-O property domains, they are legal. For example, a Component may be derived from another Component, but it would probably not make sense for it to be derived from a Collection.
 }
 
 \twotwozero{
@@ -355,7 +355,7 @@ The serialization of an \sbol{Agent} MUST have the following form:
 \begin{lstlisting}
 <?xml version="1.0" ?>
 <rdf:RDF xmlns:prov="http://www.w3.org/ns/prov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:myapp="http://myapp.com/" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/">
-  <sbol:ComponentDefinition rdf:about="http://myapp.com/codon_optimized">
+  <sbol:Component rdf:about="http://myapp.com/codon_optimized">
     <sbol:persistentIdentity rdf:resource="http://myapp.com/codon_optimized"/>
     <sbol:displayId>codon_optimized</sbol:displayId>
     <prov:wasDerivedFrom rdf:resource="http://myapp.com/non_codon_optimized"/>
@@ -363,14 +363,14 @@ The serialization of an \sbol{Agent} MUST have the following form:
     <dcterms:title>Codon optimized CDS</dcterms:title>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://myapp.com/non_codon_optimized">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://myapp.com/non_codon_optimized">
     <sbol:persistentIdentity rdf:resource="http://myapp.com/non_codon_optimized"/>
     <sbol:displayId>non_codon_optimized</sbol:displayId>
     <dcterms:title>Non Codon optimized CDS</dcterms:title>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
+  </sbol:Component>
   <prov:Activity rdf:about="http://myapp.com/codon_optimization_activity">
     <sbol:persistentIdentity rdf:resource="http://myapp.com/codon_optimization_activity"/>
     <sbol:displayId>codon_optimization_activity</sbol:displayId>
@@ -410,14 +410,14 @@ The serialization of an \sbol{Agent} MUST have the following form:
 \begin{lstlisting}
 <?xml version="1.0" ?>
 <rdf:RDF xmlns:prov="http://www.w3.org/ns/prov#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:myapp="http://myapp.com/" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/">
-  <sbol:ComponentDefinition rdf:about="http://myapp.com/bsubtilisncimb3610">
+  <sbol:Component rdf:about="http://myapp.com/bsubtilisncimb3610">
     <sbol:persistentIdentity rdf:resource="http://myapp.com/bsubtilisncimb3610"/>
     <sbol:displayId>bsubtilisncimb3610</sbol:displayId>
     <dcterms:title>Bacillus subtilis NCIMB3610</dcterms:title>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://myapp.com/bsubtilis168">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://myapp.com/bsubtilis168">
     <sbol:persistentIdentity rdf:resource="http://myapp.com/bsubtilis168"/>
     <sbol:displayId>bsubtilis168</sbol:displayId>
     <prov:wasDerivedFrom rdf:resource="http://myapp.com/bsubtilisncimb3610"/>
@@ -425,7 +425,7 @@ The serialization of an \sbol{Agent} MUST have the following form:
     <dcterms:title>Bacillus subtilis 168</dcterms:title>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
-  </sbol:ComponentDefinition>
+  </sbol:Component>
   <prov:Activity rdf:about="http://myapp.com/xraymutagenesis">
     <sbol:persistentIdentity rdf:resource="http://myapp.com/xraymutagenesis"/>
     <sbol:displayId>xraymutagenesis</sbol:displayId>
@@ -457,7 +457,7 @@ The serialization of an \sbol{Agent} MUST have the following form:
 
 \paragraph{Example - Design-build-test-learn Workflow}
 \twothreezero{
- This particular example represents an idealized workflow for model-based design. The workflow begins with a \sbol{Model} which describes the hypothesized behavior of a biological device. Using a computational tool, a new Design (\sbol{ModuleDefinition}) is composed of biological parts which links back to its \sbol{Model}. A genetic construct is then produced in the laboratory via an assembly protocol, and this biological sample is represented by a Build (\sbol{Implementation}). Once constructed, the Build is then characterized in the laboratory using an automated measurement protocol on a Tecan plate reader, thus generating Test data (represented by an \sbol{ExperimentalData}). Finally, a new \sbol{Model} is derived from these data using some a fitting algorithm implemented in the Python programming language. The final \sbol{Model} may not match the beginning \sbol{Model}, as the observed behavior may not match the prediction. This example illustrates one complete iteration through a design-build-test-learn cycle, as shown in \ref{images:design-build-test-learn}.
+ This particular example represents an idealized workflow for model-based design. The workflow begins with a \sbol{Model} which describes the hypothesized behavior of a biological device. Using a computational tool, a new Design (\sbol{Component}) is composed of biological parts which links back to its \sbol{Model}. A genetic construct is then produced in the laboratory via an assembly protocol, and this biological sample is represented by a Build (\sbol{Implementation}). Once constructed, the Build is then characterized in the laboratory using an automated measurement protocol on a Tecan plate reader, thus generating Test data (represented by an \sbol{ExperimentalData}). Finally, a new \sbol{Model} is derived from these data using some a fitting algorithm implemented in the Python programming language. The final \sbol{Model} may not match the beginning \sbol{Model}, as the observed behavior may not match the prediction. This example illustrates one complete iteration through a design-build-test-learn cycle, as shown in \ref{images:design-build-test-learn}.
 }%twotwozero end
 
 \begin{figure}[ht]
@@ -496,7 +496,7 @@ design}
         <sbol:displayId>design_usage</sbol:displayId>
         <sbol:persistentIdentity rdf:resource="http://sys-bio.org/Activity_build_generation/design_usage"/>
         <sbol:version>1.0.0</sbol:version>
-        <prov:entity rdf:resource="http://sys-bio.org/ModuleDefinition_design/1.0.0"/>
+        <prov:entity rdf:resource="http://sys-bio.org/Component_design/1.0.0"/>
         <prov:hadRole rdf:resource="http://sbols.org/v2#design"/>
       </prov:Usage>
     </prov:qualifiedUsage>
@@ -605,7 +605,7 @@ design}
     <sbol:displayId>Implementation_build</sbol:displayId>
     <sbol:persistentIdentity rdf:resource="http://sys-bio.org/Implementation_build"/>
     <sbol:version>1.0.0</sbol:version>
-    <prov:wasDerivedFrom rdf:resource="http://sys-bio.org/ModuleDefinition_design/1.0.0"/>
+    <prov:wasDerivedFrom rdf:resource="http://sys-bio.org/Component_design/1.0.0"/>
     <prov:wasGeneratedBy rdf:resource="http://sys-bio.org/Activity_build_generation/1.0.0"/>
   </sbol:Implementation>
   <sbol:Model rdf:about="http://sys-bio.org/Model_fit_model/1.0.0">
@@ -626,13 +626,13 @@ design}
     <sbol:source rdf:resource="file://server.sys-bio.org/circuit_simulation.xml"/>
     <sbol:version>1.0.0</sbol:version>
   </sbol:Model>
-  <sbol:ModuleDefinition rdf:about="http://sys-bio.org/ModuleDefinition_design/1.0.0">
-    <sbol:displayId>ModuleDefinition_design</sbol:displayId>
-    <sbol:persistentIdentity rdf:resource="http://sys-bio.org/ModuleDefinition_design"/>
+  <sbol:Component rdf:about="http://sys-bio.org/Component_design/1.0.0">
+    <sbol:displayId>Component_design</sbol:displayId>
+    <sbol:persistentIdentity rdf:resource="http://sys-bio.org/Component_design"/>
     <sbol:version>1.0.0</sbol:version>
     <prov:wasDerivedFrom rdf:resource="http://sys-bio.org/Model_predicted/1.0.0"/>
     <prov:wasGeneratedBy rdf:resource="http://sys-bio.org/Activity_design_generation/1.0.0"/>
-  </sbol:ModuleDefinition>
+  </sbol:Component>
   <prov:Plan rdf:about="http://sys-bio.org/Plan_characterization_protocol/1.0.0">
     <sbol:attachment rdf:resource="http://sys-bio.org/Attachment_characterization_protocol/1.0.0"/>
     <sbol:displayId>Plan_characterization_protocol</sbol:displayId>
@@ -693,7 +693,7 @@ design}
 \begin{lstlisting}
 <?xml version="1.0" ?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sbh="http://wiki.synbiohub.org/wiki/Terms/synbiohub#" xmlns:sbol="http://sbols.org/v2#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1">
+  <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1"/>
     <sbol:displayId>P1</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -705,8 +705,8 @@ design}
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000139"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/Gen/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://async.ece.utah.edu/Gen/1">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen"/>
     <sbol:displayId>Gen</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -714,33 +714,33 @@ design}
     <prov:wasGeneratedBy rdf:resource="http://async.ece.utah.edu/Derivation_example_SBOLDesignerActivity/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Gen/RBS_Component/1">
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Gen/RBS_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen/RBS_Component"/>
         <sbol:displayId>RBS_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Gen/Ter_Component/1">
+        <sbol:instanceOf rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Gen/Ter_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen/Ter_Component"/>
         <sbol:displayId>Ter_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/Ter/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Gen/CDS_Component/1">
+        <sbol:instanceOf rdf:resource="http://async.ece.utah.edu/Ter/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Gen/CDS_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen/CDS_Component"/>
         <sbol:displayId>CDS_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF/1"/>
-      </sbol:Component>
-    </sbol:component>
+        <sbol:instanceOf rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
     <sbol:sequenceAnnotation>
       <sbol:SequenceAnnotation rdf:about="http://async.ece.utah.edu/Gen/Gen_SequenceAnnotation1/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen/Gen_SequenceAnnotation1"/>
@@ -814,8 +814,8 @@ design}
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
     <sbol:sequence rdf:resource="http://async.ece.utah.edu/GenSequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/pAmtR/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/pAmtR/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pAmtR"/>
     <sbol:displayId>pAmtR</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -827,8 +827,8 @@ design}
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pAmtR_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF"/>
     <sbol:displayId>PhlF</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -840,8 +840,8 @@ design}
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000316"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/1">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1"/>
     <sbol:displayId>Gen_GeneratedInstance1</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -851,36 +851,36 @@ design}
     <prov:wasGeneratedBy rdf:resource="http://async.ece.utah.edu/Derivation_example_SBOLDesignerActivity/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/Ter_Component/1">
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/Ter_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1/Ter_Component"/>
         <sbol:displayId>Ter_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <prov:wasDerivedFrom rdf:resource="http://async.ece.utah.edu/Gen/Ter_Component/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/RBS_Component/1">
+        <sbol:instanceOf rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/RBS_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1/RBS_Component"/>
         <sbol:displayId>RBS_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <prov:wasDerivedFrom rdf:resource="http://async.ece.utah.edu/Gen/RBS_Component/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/CDS_Component/1">
+        <sbol:instanceOf rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/P1/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/CDS_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1/CDS_Component"/>
         <sbol:displayId>CDS_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <prov:wasDerivedFrom rdf:resource="http://async.ece.utah.edu/Gen/CDS_Component/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF/1"/>
-      </sbol:Component>
-    </sbol:component>
+        <sbol:instanceOf rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/PhlF/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
     <sbol:sequenceConstraint>
       <sbol:SequenceConstraint rdf:about="http://async.ece.utah.edu/Gen_GeneratedInstance1/Gen_SequenceConstraint1/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1/Gen_SequenceConstraint1"/>
@@ -902,8 +902,8 @@ design}
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
     <sbol:sequence rdf:resource="http://async.ece.utah.edu/GenSequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/Derivation_example/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://async.ece.utah.edu/Derivation_example/1">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example"/>
     <sbol:displayId>Derivation_example</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -913,24 +913,24 @@ design}
     <dcterms:description>An example derivation</dcterms:description>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Derivation_example/Pro_Component/1">
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Derivation_example/Pro_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example/Pro_Component"/>
         <sbol:displayId>Pro_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/Pro/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Derivation_example/Gen_Component/1">
+        <sbol:instanceOf rdf:resource="http://async.ece.utah.edu/Pro/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Derivation_example/Gen_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example/Gen_Component"/>
         <sbol:displayId>Gen_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/Gen/1"/>
-      </sbol:Component>
-    </sbol:component>
+        <sbol:instanceOf rdf:resource="http://async.ece.utah.edu/Gen/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
     <sbol:sequenceAnnotation>
       <sbol:SequenceAnnotation rdf:about="http://async.ece.utah.edu/Derivation_example/Derivation_example_SequenceAnnotation1/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example/Derivation_example_SequenceAnnotation1"/>
@@ -976,8 +976,8 @@ design}
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
     <sbol:sequence rdf:resource="http://async.ece.utah.edu/Derivation_exampleSequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31"/>
     <sbol:displayId>L3S3P31</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -989,8 +989,8 @@ design}
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
     <sbol:sequence rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S3P31_sequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/Pro/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://async.ece.utah.edu/Pro/1">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Pro"/>
     <sbol:displayId>Pro</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -998,8 +998,8 @@ design}
     <prov:wasGeneratedBy rdf:resource="http://async.ece.utah.edu/Derivation_example_SBOLDesignerActivity/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000167"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/1">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11"/>
     <sbol:displayId>Derivation_example_GeneratedInstance11</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -1011,26 +1011,26 @@ design}
     <dcterms:description>An example derivation</dcterms:description>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000804"/>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Pro_Component/1">
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Pro_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Pro_Component"/>
         <sbol:displayId>Pro_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <prov:wasDerivedFrom rdf:resource="http://async.ece.utah.edu/Derivation_example/Pro_Component/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pAmtR/1"/>
-      </sbol:Component>
-    </sbol:component>
-    <sbol:component>
-      <sbol:Component rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Gen_Component/1">
+        <sbol:instanceOf rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/pAmtR/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
+    <sbol:subComponent>
+      <sbol:SubComponent rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Gen_Component/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Gen_Component"/>
         <sbol:displayId>Gen_Component</sbol:displayId>
         <sbol:version>1</sbol:version>
         <prov:wasDerivedFrom rdf:resource="http://async.ece.utah.edu/Derivation_example/Gen_Component/1"/>
         <sbol:access rdf:resource="http://sbols.org/v2#public"/>
-        <sbol:definition rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1/1"/>
-      </sbol:Component>
-    </sbol:component>
+        <sbol:instanceOf rdf:resource="http://async.ece.utah.edu/Gen_GeneratedInstance1/1"/>
+      </sbol:SubComponent>
+    </sbol:subComponent>
     <sbol:sequenceConstraint>
       <sbol:SequenceConstraint rdf:about="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Derivation_example_SequenceConstraint/1">
         <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Derivation_example_GeneratedInstance11/Derivation_example_SequenceConstraint"/>
@@ -1042,8 +1042,8 @@ design}
       </sbol:SequenceConstraint>
     </sbol:sequenceConstraint>
     <sbol:sequence rdf:resource="http://async.ece.utah.edu/Derivation_exampleSequence/1"/>
-  </sbol:ComponentDefinition>
-  <sbol:ComponentDefinition rdf:about="http://async.ece.utah.edu/Ter/1">
+  </sbol:Component>
+  <sbol:Component rdf:about="http://async.ece.utah.edu/Ter/1">
     <sbol:persistentIdentity rdf:resource="http://async.ece.utah.edu/Ter"/>
     <sbol:displayId>Ter</sbol:displayId>
     <sbol:version>1</sbol:version>
@@ -1051,7 +1051,7 @@ design}
     <prov:wasGeneratedBy rdf:resource="http://async.ece.utah.edu/Derivation_example_SBOLDesignerActivity/1"/>
     <sbol:type rdf:resource="http://www.biopax.org/release/biopax-level3.owl#DnaRegion"/>
     <sbol:role rdf:resource="http://identifiers.org/so/SO:0000141"/>
-  </sbol:ComponentDefinition>
+  </sbol:Component>
   <sbol:Sequence rdf:about="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S2P55_sequence/1">
     <sbol:persistentIdentity rdf:resource="https://synbiohub.programmingbiology.org/public/Cello_Parts/L3S2P55_sequence"/>
     <sbol:displayId>L3S2P55_sequence</sbol:displayId>
